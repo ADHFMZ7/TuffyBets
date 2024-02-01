@@ -1,0 +1,10 @@
+USER
+{
+UserID
+Name
+Password
+DOB
+BuffyCoins
+AccessoriesOwned
+AccessoriesWorn
+}
