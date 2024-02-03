@@ -8,7 +8,7 @@ def index():
     return {"Hello": "World"}
 
 
-@app.get("/register")
+@app.post("/register")
 def register():
     """
     This endpoint is used to create a new user account.
@@ -30,4 +30,20 @@ def signin():
     
     """
     pass
+
+@app.post("/user")
+def get_user():
+    """
+    This endpoint is used to get information of 
+    currently authenticated user.
+
+    It takes in the user id and returns a json
+    response containing the respective user's 
+    data.
+    """
+    pass
+
+
+
+
 
