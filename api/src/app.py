@@ -1,4 +1,6 @@
+from datetime import date
 from fastapi import FastAPI
+from pydantic import *
 
 app = FastAPI()
 
@@ -8,8 +10,12 @@ def index():
     return {"Hello": "World"}
 
 
+class User(BaseModel):
+    username: str
+    password: str
+
 @app.post("/register")
-def register():
+def register(user: User):
     """
     This endpoint is used to create a new user account.
 
@@ -19,7 +25,11 @@ def register():
     It sends HTTP 200 response if an account was properly
     created and ___ on error.
     """
-    pass
+    print(user) 
+
+    return user 
+    #return {"Status": "Created account succesfully"}
+
 
 @app.get("/signin")
 def signin():
@@ -42,8 +52,3 @@ def get_user():
     data.
     """
     pass
-
-
-
-
-
