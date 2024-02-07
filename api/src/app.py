@@ -1,11 +1,20 @@
 from datetime import date
-from fastapi import FastAPI
+from fastapi import FastAPI 
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import *
 
 import deck
 
 app = FastAPI()
 
+# TODO: LOOK MORE INTO THESE LATER
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def index():
@@ -39,7 +48,7 @@ def signin():
     This endpoint is used to authenticate a user to 
     gain access to their existing account.
 
-    
+      
     """
     pass
 
