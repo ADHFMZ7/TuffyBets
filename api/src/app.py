@@ -21,9 +21,16 @@ def index():
     return {"Hello": "World"}
 
 
-class User(BaseModel):
+class UserAuth(BaseModel):
     username: str
     password: str
+
+class User(BaseModel):
+    id: int # Make this nullable later
+    username: str
+    password: str
+    credits: int # Make this default to zero
+
 
 @app.post("/register")
 def register(user: User):
@@ -36,20 +43,31 @@ def register(user: User):
     It sends HTTP 200 response if an account was properly
     created and ___ on error.
     """
-    print(user) 
 
-    return user 
-    #return {"Status": "Created account succesfully"}
+    # Check if username exists
+        # if it does, return user exists error
+
+    # Hash password
+
+    # Create id for new user (from database)
+
+    # Save data in db (Potentially use SQLModel)
+
+    return {"Status": "Created account succesfully"}
 
 
 @app.get("/signin")
-def signin():
+def signin(auth_pair: UserAuth):
     """
     This endpoint is used to authenticate a user to 
     gain access to their existing account.
 
-      
+   
     """
+
+    
+    
+
     pass
 
 @app.post("/user")
