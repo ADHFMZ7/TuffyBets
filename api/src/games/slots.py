@@ -26,11 +26,20 @@ class Slots:
         returns the payout 
         """
 
-        return [random.choice(list(self.symbols.items())) for _ in range(3)]
+        return [random.choice(list(self.symbols.items())) 
+                for _ in range(3)]
 
     def calculate_payout(self, spin: list[tuple[str, int]], bet_amount: int) -> int:
-        
-        return bet_amount * (spin[0] == spin[1] == spin[2])
+        """
+        Calculates amount user wins based on
+        bet amount and spin value.
+
+        Parameters:
+        spin: A list of the three symbols spun to be computed
+        bet_amount: Amount user bet on the spin.
+        """
+
+        return bet_amount * (spin[0] == spin[1] == spin[2]) * spin[0][1]
 
 
 if __name__ == '__main__':
@@ -40,7 +49,6 @@ if __name__ == '__main__':
         'cherry': 500,
         'apple': 250
     }
-
 
     prize = 0
     game = Slots(int(time.time()), symbols)
