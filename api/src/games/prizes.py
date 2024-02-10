@@ -1,31 +1,45 @@
 import random
+from enum import Enum
+
+class PrizeType(Enum):
+    COINS = "coins"
+    VANITY = "vanity"
 
 class Prize:
+    def __init__(self, name: str, value: int, prize_type: str):
+        self.name = name
+        self.value = value
+        self.prize_type = prize_type
+
+    def __str__(self):
+        return f"{self.name}: {self.value} {self.prize_type}"
+
+class PrizePool:
     def __init__(self):
         self.prizes = [
-            ("50 Coins", 50, "coins"),
-            ("100 Coins", 100, "coins"),
-            ("150 Coins", 150, "coins"),
-            ("200 Coins", 200, "coins"),
-            ("250 Coins", 250, "coins"),
-            ("300 Coins", 300, "coins"),
-            ("350 Coins", 350, "coins"),
-            ("400 Coins", 400, "coins"),
-            ("450 Coins", 450, "coins"),
-            ("500 Coins", 500, "coins"),
-            ("Golden Crown", 1000, "vanity"),
-            ("Diamond Ring", 1500, "vanity"),
-            ("Platinum Watch", 2000, "vanity"),
-            ("Crystal Chandelier", 2500, "vanity"),
-            ("Luxury Yacht", 3000, "vanity"),
-            ("Mansion", 3500, "vanity"),
-            ("Private Island", 4000, "vanity"),
-            ("Space Travel Ticket", 4500, "vanity"),
-            ("Time Machine", 5000, "vanity"),
-            ("Eternal Happiness", 10000, "vanity")
+            Prize("50 Coins", 50, PrizeType.COINS),
+            Prize("100 Coins", 100, PrizeType.COINS),
+            Prize("150 Coins", 150, PrizeType.COINS),
+            Prize("200 Coins", 200, PrizeType.COINS),
+            Prize("250 Coins", 250, PrizeType.COINS),
+            Prize("300 Coins", 300, PrizeType.COINS),
+            Prize("350 Coins", 350, PrizeType.COINS),
+            Prize("400 Coins", 400, PrizeType.COINS),
+            Prize("450 Coins", 450, PrizeType.COINS),
+            Prize("500 Coins", 500, PrizeType.COINS),
+            Prize("Golden Crown", 1000, PrizeType.VANITY),
+            Prize("Diamond Ring", 1500, PrizeType.VANITY),
+            Prize("Platinum Watch", 2000, PrizeType.VANITY),
+            Prize("Crystal Chandelier", 2500, PrizeType.VANITY),
+            Prize("Luxury Yacht", 3000, PrizeType.VANITY),
+            Prize("Mansion", 3500, PrizeType.VANITY),
+            Prize("Private Island", 4000, PrizeType.VANITY),
+            Prize("Space Travel Ticket", 4500, PrizeType.VANITY),
+            Prize("Time Machine", 5000, PrizeType.VANITY),
+            Prize("Eternal Happiness", 10000, PrizeType.VANITY)
         ]
 
-    def add_prize(self, name: str, value: int, prize_type: str):
+    def add_prize(self, name: str, value: int, prize_type: PrizeType):
         """
         Adds a customizable prize
 
@@ -36,12 +50,12 @@ class Prize:
 
         """
 
-        new_prize = (name, value, prize_type)
+        new_prize = Prize(name, value, prize_type)
         self.prizes.append(new_prize)
 
         return 0
     
-    def get_prize_by_name(self, name: str) -> tuple[str, int, str]:
+    def get_prize_by_name(self, name: str) -> Prize:
 
         """
         Returns the prize by name from the prize pool
@@ -56,7 +70,7 @@ class Prize:
                 return prize
         return None
     
-    def get_random_prize(self, seed: int = 0) -> tuple[str, int, str]:
+    def get_random_prize(self, seed: int = 0) -> Prize:
 
         """
         Chooses a random prize directly coorelated with the values, the odds
@@ -68,7 +82,7 @@ class Prize:
 
         if seed: random.seed(seed)
 
-        weighted_choices = [(prize, 1 / prize[1]) for prize in self.prizes]
+        weighted_choices = [(prize, 1 / prize.value) for prize in self.prizes]
         prizes, weights = zip(*weighted_choices)
         chosen_prize = random.choices(prizes, weights=weights)[0]
 

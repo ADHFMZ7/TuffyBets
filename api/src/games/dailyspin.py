@@ -1,12 +1,11 @@
-import random
-from prizes import Prize
+from prizes import PrizePool, Prize
 
 class DailySpin:
     
     def __init__(self):
-        self.prize_manager = Prize()
+        self.prize_manager = PrizePool()
         
-    def spin_wheel(self) -> tuple[str, int, str]:
+    def spin_wheel(self) -> Prize:
         """
         Randomly chooses from prize pool
 
