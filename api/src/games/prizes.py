@@ -6,7 +6,7 @@ class PrizeType(Enum):
     VANITY = "vanity"
 
 class Prize:
-    def __init__(self, name: str, value: int, prize_type: str):
+    def __init__(self, name: str, value: int, prize_type: PrizeType):
         self.name = name
         self.value = value
         self.prize_type = prize_type
