@@ -7,6 +7,7 @@ from models import User, Token
 
 router = APIRouter()
 
+temp_db = {}
 
 @router.post("/register")
 def register(user: User):
@@ -23,11 +24,13 @@ def register(user: User):
     # Check if username exists
         # if it does, return user exists error
 
-    print("TYPE: ", type(user.dob))
-
     dob_str = str(user.dob)
 
     user.dob = date(*list(map(int, dob_str.split('-'))))
+    user.id = len(temp_db) + 1
+
+    # TEMP DB CODE 
+    temp_db[user.username] = user
 
     # with Session(engine) as session:
     #     session.add(user)
@@ -42,12 +45,13 @@ def register(user: User):
     # Create id for new user (from database)
 
     # Save data in db (Potentially use SQLModel)
-    return {"Status": user.id}
+    return {"ID": user.id}
 
 
-@router.post("/signin", response_model=Token)
-def signin(username: Annotated[str, Form()], password: Annotated[str, Form()]):
-# def signin(form_data: OAuth2PasswordRequestForm = Depends()):
+# @router.post("/signin", response_model=Token)
+@router.post("/signin")
+# def signin(username: Annotated[str, Form()], password: Annotated[str, Form()]):
+def signin(form_data: OAuth2PasswordRequestForm = Depends()):
     """
     This endpoint is used to authenticate a user to 
     gain access to their existing account.
@@ -56,9 +60,9 @@ def signin(username: Annotated[str, Form()], password: Annotated[str, Form()]):
     """
 
     
-    print("USERNAME:", username)
-    print("PASSWORD:", password)
+    # print("USERNAME:", username)
+    # print("PASSWORD:", password)
 
-    # print("USERNAME:", form_data.username)
-    # print("PASSWORD:", form_data.password)
+    print("USERNAME:", form_data.username)
+    print("PASSWORD:", form_data.password)
     pass

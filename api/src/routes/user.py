@@ -4,13 +4,13 @@ from dependencies import oauth2_scheme
 
 router = APIRouter()
 
-@router.get("/user/{user_id}")
-def get_user(token: Annotated[str, Depends(oauth2_scheme)], user_id: int):
+@router.get("/")
+def get_user(token: Annotated[str, Depends(oauth2_scheme)]):
     """
     This endpoint is used to get information of 
     currently authenticated user.
 
-    It takes in the user id and returns a json
+    It takes in the auth token and returns a json
     response containing the respective user's 
     data.
     """

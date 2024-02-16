@@ -31,11 +31,10 @@
             // Send POST request to server
             fetch('http://localhost:8000/auth/register', {
                 method: 'POST',
-                // headers: {
-                //     'Content-Type': 'application/json'
-                // },
-                // body: JSON.stringify(jsonData)
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(jsonData)
             })
             .then(response => response.json())
             .then(data => {
@@ -43,6 +42,7 @@
                 console.log(data.message); // Display success message
                 // Optionally, redirect user to another page
                 // window.location.href = '/login'; 
+                alert(data.message);
             })
             .catch(error => {
                 console.error('Error:', error);

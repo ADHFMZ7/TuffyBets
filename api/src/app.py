@@ -18,7 +18,6 @@ from routes import user, auth
 # engine = create_engine(sqlite_url, echo=True)
 
 app = FastAPI()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 # TODO: LOOK MORE INTO THESE LATER
 app.add_middleware(
     CORSMiddleware,
