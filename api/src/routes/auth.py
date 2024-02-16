@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Form, Depends
+from fastapi import APIRouter, Form, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from typing import Annotated
 from datetime import date
@@ -29,16 +29,13 @@ def register(user: User):
     user.dob = date(*list(map(int, dob_str.split('-'))))
     user.id = len(temp_db) + 1
 
-    # TEMP DB CODE 
-    temp_db[user.username] = user
+    # TEMP DB CODE BELOW THIS ###########
+    if user.username in temp_db:
+        raise HTTPException(status_code=400, detail="Username already exists")
 
-    # with Session(engine) as session:
-    #     session.add(user)
-    #     session.commit()
-    #     session.refresh(user)
-    #     print(user.id)
-    #     return user
-    print(user)
+    temp_db[user.username] = user
+    # TEMP DB CODE ABOVE THIS ########
+
 
     # Hash password
 
@@ -56,13 +53,16 @@ def signin(form_data: OAuth2PasswordRequestForm = Depends()):
     This endpoint is used to authenticate a user to 
     gain access to their existing account.
 
-   
     """
+    user = temp_db.get(form_data.username)
 
-    
-    # print("USERNAME:", username)
-    # print("PASSWORD:", password)
+    if not user:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+
+    if not form_data.password == user.password:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
 
     print("USERNAME:", form_data.username)
     print("PASSWORD:", form_data.password)
-    pass
+
+    return {"access_token": user.username, "token_type": "bearer"}
