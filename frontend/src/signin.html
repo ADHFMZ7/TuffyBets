@@ -3,38 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account</title>
+    <title>Sign In</title>
 </head>
 <body>
 		<center>
-    <h1>Create Account</h1>
-    <form id="createAccountForm">
+    <h1>Sign In</h1>
+    <form id="signInForm">
         <input type="text" id="username" name="username" placeholder="Username" required><br><br>
         <input type="password" id="password" name="password" placeholder="Password" required><br><br>
-        <input type="date" id="dob" name="dob" required><br><br>
         <button type="submit">Create Account</button>
     </form>
 		</center>
     <script>
-        document.getElementById('createAccountForm').addEventListener('submit', function(event) {
+        document.getElementById('signInForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent form from submitting normally
 
             // Get form data
             const formData = new FormData(event.target);
 
-            // Convert form data to JSON object
-            const jsonData = {};
-            formData.forEach((value, key) => {
-                jsonData[key] = value;
-            });
-
             // Send POST request to server
-            fetch('http://localhost:8000/auth/register', {
+            fetch('http://localhost:8000/auth/signin', {
                 method: 'POST',
-                // headers: {
-                //     'Content-Type': 'application/json'
-                // },
-                // body: JSON.stringify(jsonData)
                 body: formData
             })
             .then(response => response.json())

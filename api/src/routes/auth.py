@@ -1,6 +1,8 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Form, Depends
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from typing import Annotated
 from datetime import date
-from models import User, UserAuth
+from models import User, Token
 
 
 router = APIRouter()
@@ -43,12 +45,20 @@ def register(user: User):
     return {"Status": user.id}
 
 
-@router.get("/signin")
-def signin(auth_pair: UserAuth):
+@router.post("/signin", response_model=Token)
+def signin(username: Annotated[str, Form()], password: Annotated[str, Form()]):
+# def signin(form_data: OAuth2PasswordRequestForm = Depends()):
     """
     This endpoint is used to authenticate a user to 
     gain access to their existing account.
 
    
     """
+
+    
+    print("USERNAME:", username)
+    print("PASSWORD:", password)
+
+    # print("USERNAME:", form_data.username)
+    # print("PASSWORD:", form_data.password)
     pass

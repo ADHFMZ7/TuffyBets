@@ -1,6 +1,7 @@
 from datetime import date
 from fastapi import FastAPI 
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer
 #from pydantic import BaseModel, create_model
 #from typing import Optional
 from sqlmodel import Field, SQLModel, create_engine, Session
@@ -17,7 +18,7 @@ from routes import user, auth
 # engine = create_engine(sqlite_url, echo=True)
 
 app = FastAPI()
-
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 # TODO: LOOK MORE INTO THESE LATER
 app.add_middleware(
     CORSMiddleware,
