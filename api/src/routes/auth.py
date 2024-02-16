@@ -7,7 +7,9 @@ from models import User, Token
 
 router = APIRouter()
 
-temp_db = {}
+temp_db = {
+    "user1": User(username="user1", password="pass", dob=date(2024, 2, 16))
+}
 
 @router.post("/register")
 def register(user: User):
@@ -45,8 +47,7 @@ def register(user: User):
     return {"ID": user.id}
 
 
-# @router.post("/signin", response_model=Token)
-@router.post("/signin")
+@router.post("/signin", response_model=Token)
 # def signin(username: Annotated[str, Form()], password: Annotated[str, Form()]):
 def signin(form_data: OAuth2PasswordRequestForm = Depends()):
     """
@@ -55,14 +56,10 @@ def signin(form_data: OAuth2PasswordRequestForm = Depends()):
 
     """
     user = temp_db.get(form_data.username)
+    print(user)
 
-    if not user:
+    if not user or form_data.password != user.password:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
-
-    if not form_data.password == user.password:
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
-
-    print("USERNAME:", form_data.username)
-    print("PASSWORD:", form_data.password)
 
     return {"access_token": user.username, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer"}
