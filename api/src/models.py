@@ -6,11 +6,17 @@ from datetime import date
 
 class UserAuth(BaseModel):
     """
-    This is used for authenticating a user
+    Used for authenticating a user
     """
     username: str
     password: str
 
+class Token(BaseModel):
+    """
+    Access token for authentication
+    """
+    access_token: str
+    token_type:   str
 
 class User(SQLModel, table=True):
     """
@@ -27,6 +33,18 @@ class User(SQLModel, table=True):
     password: str
     dob: date 
     credits: Optional[int] = Field(default=0)
+
+    # def __repr__(self):
+    #     return f"User({self.id}, {self.username})" 
+
+class UserUpdate(BaseModel):
+    """
+    Represents the data used to update an existing user record in the database.
+    """
+    username: Optional[str] = None
+    password: Optional[str] = None
+    dob: Optional[date] = None
+    credits: Optional[int] = None
 
 class Game(SQLModel):
     game_id: int
