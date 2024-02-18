@@ -37,6 +37,15 @@ class User(SQLModel, table=True):
     # def __repr__(self):
     #     return f"User({self.id}, {self.username})" 
 
+class UserUpdate(BaseModel):
+    """
+    Represents the data used to update an existing user record in the database.
+    """
+    username: Optional[str] = None
+    password: Optional[str] = None
+    dob: Optional[date] = None
+    credits: Optional[int] = None
+
 class Game(SQLModel):
     game_id: int
     players: list

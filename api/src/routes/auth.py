@@ -3,16 +3,16 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from typing import Annotated
 from datetime import date
 from models import User, Token
+from db import get_user_by_id, user_exists, create_user, get_user_by_username
+from dependencies import get_session
+from sqlmodel import Session
 
 
 router = APIRouter()
 
-temp_db = {
-    "user1": User(username="user1", password="pass", dob=date(2024, 2, 16))
-}
 
 @router.post("/register")
-def register(user: User):
+def register(user: User, session: Session = Depends(get_session)):
     """
     This endpoint is used to create a new user account.
 
@@ -23,43 +23,35 @@ def register(user: User):
     created and ___ on error.
     """
 
-    # Check if username exists
-        # if it does, return user exists error
+
+    if user_exists(session, user.username):
+        raise HTTPException(status_code=400, detail="Username already exists")
 
     dob_str = str(user.dob)
 
     user.dob = date(*list(map(int, dob_str.split('-'))))
-    user.id = len(temp_db) + 1
 
-    # TEMP DB CODE BELOW THIS ###########
-    if user.username in temp_db:
-        raise HTTPException(status_code=400, detail="Username already exists")
+    # Hash password (IMPLEMENTED LATER)
+    # TODO: hashed passwords
 
-    temp_db[user.username] = user
-    # TEMP DB CODE ABOVE THIS ########
+    user_id = create_user(session, user)
 
-
-    # Hash password
-
-    # Create id for new user (from database)
-
-    # Save data in db (Potentially use SQLModel)
-    return {"ID": user.id}
+    return {"ID": user_id}
 
 
 @router.post("/signin", response_model=Token)
 # def signin(username: Annotated[str, Form()], password: Annotated[str, Form()]):
-def signin(form_data: OAuth2PasswordRequestForm = Depends()):
+def signin(form_data: OAuth2PasswordRequestForm = Depends(), session: Session=Depends(get_session)):
     """
     This endpoint is used to authenticate a user to 
     gain access to their existing account.
 
     """
-    user = temp_db.get(form_data.username)
-    print(user)
+    user = get_user_by_username(session, form_data.username)
 
     if not user or form_data.password != user.password:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
 
+
+    # TODO: more secure tokens later
     return {"access_token": user.username, "token_type": "bearer"}
-    return {"access_token": access_token, "token_type": "bearer"}
