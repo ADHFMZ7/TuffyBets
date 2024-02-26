@@ -31,6 +31,13 @@ def create_user(session: Session, user: User) -> User:
         id: int - Newly created user's id
     """
     ... 
+    if not user_exists:
+        session.add(user)  #asks session to add user to database
+
+    statement = select(user.id)  #creates query for user id
+    result = session.exec(statement)  #executes query and stores result
+
+    return result
 
 def user_exists(session: Session, username: str) -> bool:
     """
@@ -45,6 +52,11 @@ def user_exists(session: Session, username: str) -> bool:
         bool
     """
     ...
+    statement = select(user).where(user.username = username)
+    result = session.exec(statement)
+
+    return not result == None
+
 
 def get_user_by_id(session: Session, user_id: int) -> Optional[User]:
     """
