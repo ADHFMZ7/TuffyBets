@@ -7,9 +7,13 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlmodel import Field, SQLModel, create_engine, Session
 from models import User, UserAuth
 from routes import user, auth
+from db import create_db_and_tables
 
 app = FastAPI()
 # TODO: LOOK MORE INTO THESE LATER
+
+create_db_and_tables()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

@@ -36,6 +36,9 @@ def register(user: User, session: Session = Depends(get_session)):
 
     user_id = create_user(session, user)
 
+    if not user_id:
+        raise HTTPException(status_code=400, detail="Failed to create user")
+
     return {"ID": user_id}
 
 

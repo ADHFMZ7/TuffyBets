@@ -1,4 +1,4 @@
-from sqlmodel import Session, SQLModel, create_engine
+from sqlmodel import Session, SQLModel, create_engine, select
 from models import User, Game, UserUpdate
 from datetime import date
 from typing import Optional
@@ -9,17 +9,12 @@ sqlite_url = f"sqlite:///{sqlite_file_name}"
 connect_args = {"check_same_thread": False}
 engine = create_engine(sqlite_url, echo=True, connect_args=connect_args)
 
-# TEMP vvvvvv
-temp_db = {
-    "user1": User(username="user1", password="pass", dob=date(2024, 2, 16))
-}
-# TEMP ^^^^^
 
 def create_db_and_tables() -> None:
     SQLModel.metadata.create_all(engine)
 
 
-def create_user(session: Session, user: User) -> User:
+def create_user(session: Session, user: User) -> int | None:
     """
     Create a new user in the database
 
@@ -31,13 +26,10 @@ def create_user(session: Session, user: User) -> User:
         id: int - Newly created user's id
     """
     ... 
-    if not user_exists:
-        session.add(user)  #asks session to add user to database
+    session.add(user)  #asks session to add user to database
+    session.commit()
 
-    statement = select(user.id)  #creates query for user id
-    result = session.exec(statement)  #executes query and stores result
-
-    return result
+    return user.id
 
 def user_exists(session: Session, username: str) -> bool:
     """
@@ -51,11 +43,11 @@ def user_exists(session: Session, username: str) -> bool:
     returns:
         bool
     """
-    ...
-    statement = select(user).where(user.username = username)
+
+    statement = select(User).where(User.username == username)
     result = session.exec(statement)
 
-    return not result == None
+    return not result.first() == None
 
 
 def get_user_by_id(session: Session, user_id: int) -> Optional[User]:
