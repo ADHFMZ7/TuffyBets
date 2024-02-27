@@ -65,7 +65,7 @@ def get_user_by_id(session: Session, user_id: int) -> Optional[User]:
     statement = select(User).where(User.id == user_id)
     result = session.exec(statement)
 
-    return result
+    return result.first()
 
 def get_user_by_username(session: Session, username: str) -> Optional[User]:
     """
@@ -82,7 +82,7 @@ def get_user_by_username(session: Session, username: str) -> Optional[User]:
     statement = select(User).where(User.username == username)
     result = session.exec(statement)
 
-    return result
+    return result.first()
 
 def update_user(session: Session, user_id: int, user_update: UserUpdate) -> Optional[User]:
     """
