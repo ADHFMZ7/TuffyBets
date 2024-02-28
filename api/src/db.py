@@ -97,6 +97,10 @@ def update_user(session: Session, user_id: int, user_update: UserUpdate) -> Opti
         Optional[User] - Updated user object if found and updated, None otherwise
     """
     ...
+    statement = "" #fill in with REPLACE INTO statement using the updated schema in models.py
+
+    session.commit()
+    session.refresh()
 
 def delete_user(session: Session, user_id: int) -> Optional[User]:
     """
