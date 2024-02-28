@@ -36,13 +36,15 @@ def register(user: User, session: Session = Depends(get_session)):
 
     user_id = create_user(session, user)
 
+    print(user_id)
+
     if not user_id:
         raise HTTPException(status_code=400, detail="Failed to create user")
 
     return {"ID": user_id}
 
 
-@router.post("/signin", response_model=Token)
+@router.post("/login")
 # def signin(username: Annotated[str, Form()], password: Annotated[str, Form()]):
 def signin(form_data: OAuth2PasswordRequestForm = Depends(), session: Session=Depends(get_session)):
     """
@@ -52,9 +54,10 @@ def signin(form_data: OAuth2PasswordRequestForm = Depends(), session: Session=De
     """
     user = get_user_by_username(session, form_data.username)
 
+    
+    
     if not user or form_data.password != user.password:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
-
 
     # TODO: more secure tokens later
     return {"access_token": user.username, "token_type": "bearer"}
