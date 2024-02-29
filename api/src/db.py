@@ -97,10 +97,22 @@ def update_user(session: Session, user_id: int, user_update: UserUpdate) -> Opti
         Optional[User] - Updated user object if found and updated, None otherwise
     """
     ...
-    statement = "" #fill in with REPLACE INTO statement using the updated schema in models.py
+    statement = select(User).where(User.id == user_id)
+    result = session.exec(statement)
+    user = result.one()
 
+    if user_update.username != None:
+        user.username = user_update.username
+        
+    if user_update.password != None:
+        user.password = user_update.password
+        
+    if user_update.credits != None:
+        user.credits = user_update.credits
+    
+    session.add(user)
     session.commit()
-    session.refresh()
+    session.refresh(user)
 
 def delete_user(session: Session, user_id: int) -> Optional[User]:
     """
@@ -114,6 +126,12 @@ def delete_user(session: Session, user_id: int) -> Optional[User]:
         Optional[User] - Deleted user object if found and deleted, None otherwise
     """
     ...
+    statement = select(User).where(User.id == user_id)
+    result = session.exec(statement)
+    user = result.one()
+
+    session.delete(user)
+    session.commit()
 
 
 
