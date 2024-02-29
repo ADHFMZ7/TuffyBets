@@ -43,7 +43,6 @@ class UserUpdate(BaseModel):
     """
     username: Optional[str] = None
     password: Optional[str] = None
-    dob: Optional[date] = None
     credits: Optional[int] = None
 
 class Game(SQLModel):
