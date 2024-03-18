@@ -1,7 +1,6 @@
 from enum import Enum
 import time
 import random
-import pprint
 import json
 
 class Suit(Enum):
@@ -21,7 +20,7 @@ class Card:
         self.suit  = suit
 
     def __repr__(self):
-        return f"{str(self.rank.value).zfill(2)}{str(self.suit)[0]}"
+        return f"{str(self.rank.value).zfill(2)}{str(self.suit.value)}"
 
     def __str__(self):
         return f"{self.rank} of {self.suit}"
@@ -124,8 +123,23 @@ class Deck:
             "hands": hands,
         }
 
-def deserialize_deck(self):
-    deck = Deck(1)
+def verify_deck_json(deck):
+    return True
+
+def deserialize_deck(deck):
+    
+    if not verify_deck_json(deck):
+        return False
+
+    deck_count = deck["deck_count"]
+
+    new_deck = Deck(deck_count)
+
+    hands = deck["hands"].keys()
+    for hand in hands:
+        new_deck.hands[hand] = [Card(Rank(int(card_repr[:2])), Suit(int(card_repr[2]))) for card_repr in deck["hands"][hand]]
+
+    return new_deck
 
 if __name__ == "__main__":
     deck = Deck(1, seed=100)
@@ -142,10 +156,14 @@ if __name__ == "__main__":
     #     print(card)
     js = deck.serialize()
 
-    print(json.dumps(
-        js,
-        indent=2,
-        separators=(',', ': ')
-    ))
+    # print(json.dumps(
+    #     js,
+    #     indent=2,
+    #     separators=(',', ': ')
+    # ))
+
+    print(deserialize_deck(js).serialize() == js)
+
+
 
 
