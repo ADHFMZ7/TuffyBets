@@ -1,9 +1,11 @@
 from enum import Enum
 import time
 import random
+import pprint
+import json
 
 class Suit(Enum):
-    hearts, diamonds, spades, clubs = range(1, 5)
+    Hearts, Diamonds, Spades, Clubs = range(1, 5)
     
     def __str__(self): return self.name
 
@@ -19,6 +21,9 @@ class Card:
         self.suit  = suit
 
     def __repr__(self):
+        return f"{str(self.rank.value).zfill(2)}{str(self.suit)[0]}"
+
+    def __str__(self):
         return f"{self.rank} of {self.suit}"
 
 class Deck:
@@ -35,9 +40,9 @@ class Deck:
         """        
 
         self.hands = {}
-        self._cards = [Card(rank, suit) for suit in Suit 
-                                        for rank in Rank 
-                                        for _ in range(deck_count)]
+        self.deck_count = deck_count
+
+        self.add_hand("shoe")
 
         self.seed = seed if seed else int(time.time())
         random.seed(self.seed)
@@ -53,9 +58,15 @@ class Deck:
             hand_name - The name of the hand to be created.
         """
 
-        self.hands[hand_name] = []
+        cards = []
+        if hand_name == "shoe":
+            cards = [Card(rank, suit)   for suit in Suit 
+                                        for rank in Rank 
+                                        for _ in range(self.deck_count)]
+           
+        self.hands[hand_name] = cards 
 
-    def shuffle(self, hand: str = ""):
+    def shuffle(self, hand: str = "shoe"):
         """
         Shuffles the deck of cards to a randomized configuration.
 
@@ -63,22 +74,24 @@ class Deck:
             hand - The name of the hand to shuffle
         """
 
-        if hand: self.verify_hand(hand)
+        if not self.hand_exists(hand):
+            return False
 
-        random.shuffle(self._cards) if not hand else random.shuffle(self.hands[hand])
+        random.shuffle(self.hands[hand])
 
-    def draw(self, num_cards: int, hand):
+    def draw(self, num_cards: int, hand: str):
         """
         Draws cards from the top of the deck.
 
         parameters:
             num_cards - the number of cards to draw
+            hand - the hand to deal the card to
         """
 
-        self.verify_hand(hand) # Handle error
+        self.hand_exists(hand) # Handle error
 
         for _ in range(num_cards):
-            self.hands[hand].append(self._cards.pop())
+            self.hands[hand].append(self.hands["shoe"].pop())
 
 
     def verify_deck(self):
@@ -88,7 +101,7 @@ class Deck:
         """
         ... 
 
-    def verify_hand(self, hand: str):
+    def hand_exists(self, hand: str):
         """
         Verifies the hand name provided is a valid hand in the deck.
 
@@ -97,8 +110,42 @@ class Deck:
         """
         return hand in self.hands.keys()
 
+    def serialize(self):
+        """
+        Serializes the state of a deck of cards
+        """
+        hands = {}
+
+        for hand in self.hands:
+            hands[hand] = [repr(card) for card in self.hands[hand]]
+        
+        return {
+            "deck_count": self.deck_count,
+            "hands": hands,
+        }
+
+def deserialize_deck(self):
+    deck = Deck(1)
+
 if __name__ == "__main__":
     deck = Deck(1, seed=100)
-    for card in deck._cards:
-        print(card)
+
+    deck.add_hand("dealer")
+    deck.add_hand("p1")
+    deck.add_hand("p2")
+    deck.add_hand("p3")
+
+    for hand in deck.hands:
+        deck.draw(2, hand)
+
+    # for card in deck._cards:
+    #     print(card)
+    js = deck.serialize()
+
+    print(json.dumps(
+        js,
+        indent=2,
+        separators=(',', ': ')
+    ))
+
 
