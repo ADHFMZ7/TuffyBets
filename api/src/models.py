@@ -18,6 +18,8 @@ class Token(BaseModel):
     access_token: str
     token_type:   str
 
+# TODO: Separate user object and user stored in database.
+
 class User(SQLModel, table=True):
     """
     This is the schema for a user in the database. 
