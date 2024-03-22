@@ -30,7 +30,7 @@ def create_user(session: Session, user: User) -> User:
     Returns:
         id: int - Newly created user's id
     """
-    ... 
+
 
 def user_exists(session: Session, username: str) -> bool:
     """
