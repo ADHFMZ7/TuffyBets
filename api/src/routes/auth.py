@@ -2,7 +2,7 @@ from fastapi import APIRouter, Form, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from typing import Annotated
 from datetime import date
-from models import User, Token
+from models import User, Token, UserReg, UserInDB
 from db import get_user_by_id, user_exists, create_user, get_user_by_username
 from dependencies import get_session
 from sqlmodel import Session
@@ -12,7 +12,7 @@ router = APIRouter()
 
 
 @router.post("/register")
-def register(user_reg: User, session: Session = Depends(get_session)):
+def register(user_reg: UserReg, session: Session = Depends(get_session)):
     """
     This endpoint is used to create a new user account.
 
@@ -34,7 +34,7 @@ def register(user_reg: User, session: Session = Depends(get_session)):
     params = user_reg.model_dump()
     del params["password"]
 
-    user = User(**params, hashed_password=hashed_pass)
+    user = UserInDB(**params, hashed_password=hashed_pass)
     create_user(session, user)
 
     return {"user_id": user.id}
