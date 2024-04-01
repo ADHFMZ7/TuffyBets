@@ -11,6 +11,9 @@ from db import engine, create_db_and_tables
 
 app = FastAPI()
 # TODO: LOOK MORE INTO THESE LATER
+
+create_db_and_tables()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

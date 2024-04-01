@@ -1,4 +1,4 @@
-from sqlmodel import Session, SQLModel, create_engine
+from sqlmodel import Session, SQLModel, create_engine, select
 from models import User, Game, UserUpdate
 from datetime import date
 from typing import Optional
@@ -9,17 +9,12 @@ sqlite_url = f"sqlite:///{sqlite_file_name}"
 connect_args = {"check_same_thread": False}
 engine = create_engine(sqlite_url, echo=True, connect_args=connect_args)
 
-# TEMP vvvvvv
-temp_db = {
-    "user1": User(username="user1", password="pass", dob=date(2024, 2, 16))
-}
-# TEMP ^^^^^
 
 def create_db_and_tables() -> None:
     SQLModel.metadata.create_all(engine)
 
 
-def create_user(session: Session, user: User) -> User:
+def create_user(session: Session, user: User) -> int | None:
     """
     Create a new user in the database
 
@@ -30,7 +25,11 @@ def create_user(session: Session, user: User) -> User:
     Returns:
         id: int - Newly created user's id
     """
+    ... 
+    session.add(user)  #asks session to add user to database
+    session.commit()
 
+    return user.id
 
 def user_exists(session: Session, username: str) -> bool:
     """
@@ -44,7 +43,12 @@ def user_exists(session: Session, username: str) -> bool:
     returns:
         bool
     """
-    ...
+
+    statement = select(User).where(User.username == username)
+    result = session.exec(statement)
+
+    return result.first() is not None
+
 
 def get_user_by_id(session: Session, user_id: int) -> Optional[User]:
     """
@@ -58,6 +62,10 @@ def get_user_by_id(session: Session, user_id: int) -> Optional[User]:
         Optional[User] - User object if found, None otherwise
     """ 
     ...
+    statement = select(User).where(User.id == user_id)
+    result = session.exec(statement)
+
+    return result.one()
 
 def get_user_by_username(session: Session, username: str) -> Optional[User]:
     """
@@ -71,6 +79,10 @@ def get_user_by_username(session: Session, username: str) -> Optional[User]:
         Optional[User] - User object if found, None otherwise
     """ 
     ...
+    statement = select(User).where(User.username == username)
+    result = session.exec(statement)
+
+    return result.one()
 
 def update_user(session: Session, user_id: int, user_update: UserUpdate) -> Optional[User]:
     """
@@ -85,6 +97,22 @@ def update_user(session: Session, user_id: int, user_update: UserUpdate) -> Opti
         Optional[User] - Updated user object if found and updated, None otherwise
     """
     ...
+    statement = select(User).where(User.id == user_id)
+    result = session.exec(statement)
+    user = result.one()
+
+    if user_update.username != None:
+        user.username = user_update.username
+        
+    if user_update.password != None:
+        user.password = user_update.password
+        
+    if user_update.credits != None:
+        user.credits = user_update.credits
+    
+    session.add(user)
+    session.commit()
+    session.refresh(user)
 
 def delete_user(session: Session, user_id: int) -> Optional[User]:
     """
@@ -98,6 +126,12 @@ def delete_user(session: Session, user_id: int) -> Optional[User]:
         Optional[User] - Deleted user object if found and deleted, None otherwise
     """
     ...
+    statement = select(User).where(User.id == user_id)
+    result = session.exec(statement)
+    user = result.one()
+
+    session.delete(user)
+    session.commit()
 
 
 
