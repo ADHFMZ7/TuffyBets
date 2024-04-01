@@ -1,10 +1,9 @@
-from models import User
 from sqlmodel import Session
 from db import get_user_by_username
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from datetime import timedelta, datetime, timezone
-from models import Token
+from models import Token, User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

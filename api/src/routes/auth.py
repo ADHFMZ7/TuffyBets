@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Form, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from typing import Annotated
-from datetime import date
-from models import User, Token, UserReg, UserInDB
+from datetime import date, timedelta
+from models import User, Token, UserReg
 from db import get_user_by_id, user_exists, create_user, get_user_by_username
 from dependencies import get_session
 from sqlmodel import Session
@@ -34,7 +34,7 @@ def register(user_reg: UserReg, session: Session = Depends(get_session)):
     params = user_reg.model_dump()
     del params["password"]
 
-    user = UserInDB(**params, hashed_password=hashed_pass)
+    user = User(**params, hashed_password=hashed_pass)
     create_user(session, user)
 
     return {"user_id": user.id}
@@ -54,6 +54,10 @@ def signin(form_data: OAuth2PasswordRequestForm = Depends(), session: Session=De
         raise HTTPException(status_code=401, detail="Incorrect username or password")
 
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_jwt(data=user.model_dump(), expires_delta=access_token_expires)
+
+    user_data = user.model_dump()
+    user_data["dob"] = str(user_data["dob"])
+
+    access_token = create_jwt(data=user_data, expires_delta=access_token_expires)
 
     return Token(access_token=access_token, token_type="bearer")

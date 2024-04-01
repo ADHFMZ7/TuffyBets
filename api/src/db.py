@@ -47,7 +47,7 @@ def user_exists(session: Session, username: str) -> bool:
     statement = select(User).where(User.username == username)
     result = session.exec(statement)
 
-    return result.one() is not None
+    return result.first() is not None
 
 
 def get_user_by_id(session: Session, user_id: int) -> Optional[User]:
