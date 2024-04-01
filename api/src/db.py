@@ -47,7 +47,7 @@ def user_exists(session: Session, username: str) -> bool:
     statement = select(User).where(User.username == username)
     result = session.exec(statement)
 
-    return not result.first() == None
+    return result.one() is not None
 
 
 def get_user_by_id(session: Session, user_id: int) -> Optional[User]:
@@ -65,7 +65,7 @@ def get_user_by_id(session: Session, user_id: int) -> Optional[User]:
     statement = select(User).where(User.id == user_id)
     result = session.exec(statement)
 
-    return result.first()
+    return result.one()
 
 def get_user_by_username(session: Session, username: str) -> Optional[User]:
     """
@@ -82,7 +82,7 @@ def get_user_by_username(session: Session, username: str) -> Optional[User]:
     statement = select(User).where(User.username == username)
     result = session.exec(statement)
 
-    return result.first()
+    return result.one()
 
 def update_user(session: Session, user_id: int, user_update: UserUpdate) -> Optional[User]:
     """
