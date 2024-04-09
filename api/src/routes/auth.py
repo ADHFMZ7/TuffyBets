@@ -1,18 +1,18 @@
 from fastapi import APIRouter, Form, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from typing import Annotated
-from datetime import date
-from models import User, Token
+from datetime import date, timedelta
+from models import User, Token, UserReg
 from db import get_user_by_id, user_exists, create_user, get_user_by_username
 from dependencies import get_session
 from sqlmodel import Session
-
+from security import validate_user, hash_password, ACCESS_TOKEN_EXPIRE_MINUTES, create_jwt
 
 router = APIRouter()
 
 
 @router.post("/register")
-def register(user: User, session: Session = Depends(get_session)):
+def register(user_reg: UserReg, session: Session = Depends(get_session)):
     """
     This endpoint is used to create a new user account.
 
@@ -23,23 +23,24 @@ def register(user: User, session: Session = Depends(get_session)):
     created and ___ on error.
     """
 
-
-    if user_exists(session, user.username):
+    if user_exists(session, user_reg.username):
         raise HTTPException(status_code=400, detail="Username already exists")
 
-    dob_str = str(user.dob)
+    dob_str = str(user_reg.dob)
 
-    user.dob = date(*list(map(int, dob_str.split('-'))))
+    hashed_pass = hash_password(user_reg.password)
+    user_reg.dob = date(*list(map(int, dob_str.split('-'))))
 
-    # Hash password (IMPLEMENTED LATER)
-    # TODO: hashed passwords
+    params = user_reg.model_dump()
+    del params["password"]
 
-    user_id = create_user(session, user)
+    user = User(**params, hashed_password=hashed_pass)
+    create_user(session, user)
 
-    return {"ID": user_id}
+    return {"user_id": user.id}
 
 
-@router.post("/signin", response_model=Token)
+@router.post("/login")
 # def signin(username: Annotated[str, Form()], password: Annotated[str, Form()]):
 def signin(form_data: OAuth2PasswordRequestForm = Depends(), session: Session=Depends(get_session)):
     """
@@ -47,11 +48,16 @@ def signin(form_data: OAuth2PasswordRequestForm = Depends(), session: Session=De
     gain access to their existing account.
 
     """
-    user = get_user_by_username(session, form_data.username)
+    user = validate_user(session, form_data.username, form_data.password)
 
-    if not user or form_data.password != user.password:
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    if not user:
+        raise HTTPException(status_code=401, detail="Incorrect username or password")
 
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
-    # TODO: more secure tokens later
-    return {"access_token": user.username, "token_type": "bearer"}
+    user_data = user.model_dump()
+    user_data["dob"] = str(user_data["dob"])
+
+    access_token = create_jwt(data=user_data, expires_delta=access_token_expires)
+
+    return Token(access_token=access_token, token_type="bearer")

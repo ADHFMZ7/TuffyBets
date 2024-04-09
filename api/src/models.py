@@ -18,7 +18,9 @@ class Token(BaseModel):
     access_token: str
     token_type:   str
 
-class User(SQLModel, table=True):
+# TODO: Separate user object and user stored in database.
+
+class UserBase(SQLModel):
     """
     This is the schema for a user in the database. 
 
@@ -30,12 +32,18 @@ class User(SQLModel, table=True):
     """
     id: Optional[int] = Field(default=None, primary_key=True)
     username: str
-    password: str
     dob: date 
     credits: Optional[int] = Field(default=0)
 
     # def __repr__(self):
     #     return f"User({self.id}, {self.username})" 
+
+class UserReg(UserBase):
+    password: str
+
+class User(UserBase, table=True):
+    hashed_password: str
+
 
 class UserUpdate(BaseModel):
     """
@@ -43,7 +51,6 @@ class UserUpdate(BaseModel):
     """
     username: Optional[str] = None
     password: Optional[str] = None
-    dob: Optional[date] = None
     credits: Optional[int] = None
 
 class Game(SQLModel):
