@@ -1,19 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 </head>
 <body>
-		<center>
-    <h1>Sign In</h1>
-    <form id="signInForm">
-        <input type="text" id="username" name="username" placeholder="Username" required><br><br>
-        <input type="password" id="password" name="password" placeholder="Password" required><br><br>
-        <button type="submit">Create Account</button>
-    </form>
-		</center>
+    <div id="header">
+
+        <!-- Inner -->
+            <div class="inner">
+                <header>
+                    <h1><a href="index.html" id="logo">Buffy Bets</a></h1>
+                </header>
+            </div>
+
+        <!-- Nav -->
+            <nav id="nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li>
+                        <a href="#">Games</a>
+                        <ul>
+                            <li><a href="#">Blackjack</a></li>
+                            <li><a href="#">Roulette</a></li>
+                            <li><a href="#">Slots</a></li>
+                            <li><a href="#">Poker</a></li>
+                            <li><a href="#">Daily Spin</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="left-sidebar.html">Left Sidebar</a></li>
+                    <li><a href="signin.html">Sign In </a></li>
+                    <li><a href="signup.html">Sign Up</a></li>
+                </ul>
+            </nav>
+
+    </div>
+
+    <center>
+        <h2><a href="#">Sign In</a></h2>
+        <form id="signInForm">
+            <input type="text" id="username" name="username" placeholder="Username" required><br><br>
+            <input type="password" id="password" name="password" placeholder="Password" required><br><br>
+            <button type="submit">Sign In</button>
+        </form>
+    </center>
     <script>
         document.getElementById('signInForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent form from submitting normally
@@ -31,7 +64,8 @@
                 // Handle response from server
                 console.log(data.message); // Display success message
                 // Optionally, redirect user to another page
-                // window.location.href = '/login'; 
+                // window.location.href = '/home'; 
+                alert(data.message); // Optional: alert the user with the message
             })
             .catch(error => {
                 console.error('Error:', error);
