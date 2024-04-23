@@ -156,14 +156,17 @@ if __name__ == "__main__":
     #     print(card)
     js = deck.serialize()
 
+    # print(js)
+
     # print(json.dumps(
     #     js,
     #     indent=2,
     #     separators=(',', ': ')
     # ))
 
+ 
+    for i in deck.hands["shoe"]:
+        print(i)
+    
     print(deserialize_deck(js).serialize() == js)
-
-
-
 

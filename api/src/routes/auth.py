@@ -33,6 +33,7 @@ def register(user_reg: UserReg, session: Session = Depends(get_session)):
 
     params = user_reg.model_dump()
     del params["password"]
+    user_reg.id = None
 
     user = User(**params, hashed_password=hashed_pass)
     create_user(session, user)

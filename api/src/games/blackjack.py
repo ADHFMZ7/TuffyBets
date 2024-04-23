@@ -3,7 +3,7 @@ from deck.deck import Deck
 
 class BJState(BaseModel):
     players: list[str]
-    hands:   dict[str, Deck] 
+    hands:   Deck
 
 class Blackjack:
 
@@ -15,7 +15,6 @@ class Blackjack:
 
     def deal_card(self, player: int):
         ...
-
 
 
 if __name__ == "__main__":
@@ -32,8 +31,8 @@ if __name__ == "__main__":
         for player in players:
 
             game.deal_card(player)
-
-
+            
+    
         # Give dealer his card
 
         
