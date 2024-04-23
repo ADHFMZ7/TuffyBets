@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/main.css" />
+	<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+    <title>Tuffy Bet's Dailyspin</title>
+</head>
+<body>
+    <article>
+    <h2><a href="index.html" id="logo">Buffy Bets</a></h2>
+    <!-- <h3>Dailyspin!</h3> -->
+    <p>Click to spin now!</p>
+    <button id="myButton">Open the wheel!</button>
+    <div id="myPopup" class="popup">
+        <div class="popup-content" id="popupContent">
+            <h2>&nbsp Buffy's Dailyspin</h2> 
+            <link href="dailyspin/style.css" rel="stylesheet" type="text/css" />
+            <div id="mainbox" class="mainbox">
+                <div id="box" class="box">
+                    <div class="box1">
+                        <span class="span1"><b>&nbsp  Super Man</b></span>
+                        <span class="span2"><b>7500</b></span>
+                        <span class="span3"><b>Bat Man</b></span>
+                        <span class="span4"><b>Joker</b></span>
+                    </div>
+                    <div class="box2">
+                        <span class="span1"><b>&nbsp Shoplifters</b></span>
+                        <span class="span2"><b>&nbsp Inception</b></span>
+                        <span class="span3"><b>Deadpool</b></span>
+                        <span class="span4"><b>Terminator</b></span>
+                    </div>
+                </div> 
+                <button class="spin" onclick="rotateFunction()">SPIN</button>
+                <script src="dailyspin/script.js"></script>
+            </div>
+            <button id="closePopup">Close</button>
+        </div>
+    </div>
+ 
+    </article>
+
+    <footer id="footer">
+        <section>
+            <p>testing where is this</p>
+        </section>
+    </footer>
+
+    <script>
+        myButton.addEventListener("click", function () {
+            myPopup.classList.add("show");
+        });
+        closePopup.addEventListener("click", function () {
+            myPopup.classList.remove("show");
+        });
+        window.addEventListener("click", function (event) {
+            if (event.target == myPopup) {
+                myPopup.classList.remove("show");
+            }
+        });
+    </script>
+</body>
+</html>
