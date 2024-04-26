@@ -57,6 +57,7 @@ def signin(form_data: OAuth2PasswordRequestForm = Depends(), session: Session=De
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
     user_data = user.model_dump()
+    del user_data["hashed_password"]
     user_data["dob"] = str(user_data["dob"])
 
     access_token = create_jwt(data=user_data, expires_delta=access_token_expires)

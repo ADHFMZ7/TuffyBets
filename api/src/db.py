@@ -81,12 +81,9 @@ def get_user_by_username(session: Session, username: str) -> Optional[User]:
     returns:
         Optional[User] - User object if found, None otherwise
     """ 
-    ...
     statement = select(User).where(User.username == username)
-    result = session.exec(statement)
-    if result:
-        return result.one()
-    return None
+    result = session.exec(statement).first()
+    return result 
 
 def update_user(session: Session, user_id: int, user_update: UserUpdate) -> Optional[User]:
     """
