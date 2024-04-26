@@ -56,3 +56,8 @@ class Game(SQLModel):
     game_id: int
     players: list[str]
 
+# class Transaction(SQLModel, table=True):
+#     transaction_id: int = Field(default=None, primary_key=True)
+#     user_id: int
+#     amount: int
+#     date: date

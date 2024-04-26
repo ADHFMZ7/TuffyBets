@@ -20,6 +20,8 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> Use
     Returns: 
         User: The user that created the provided token 
     """
+    print("TOKEN: ", token) 
+    
     credentials_exception = HTTPException(
         status_code=401,
         detail="Could not validate credentials",
