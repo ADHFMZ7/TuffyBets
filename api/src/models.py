@@ -3,7 +3,6 @@ from pydantic import BaseModel
 from typing import Optional
 from datetime import date
 
-
 class UserAuth(BaseModel):
     """
     Used for authenticating a user
@@ -55,5 +54,5 @@ class UserUpdate(BaseModel):
 
 class Game(SQLModel):
     game_id: int
-    players: list
+    players: list[str]
 

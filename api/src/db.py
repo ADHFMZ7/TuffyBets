@@ -63,9 +63,11 @@ def get_user_by_id(session: Session, user_id: int) -> Optional[User]:
     """ 
     ...
     statement = select(User).where(User.id == user_id)
-    result = session.exec(statement)
+    result = session.exec(statement).first()
 
-    return result.one()
+    if result:
+        return result
+    return None
 
 def get_user_by_username(session: Session, username: str) -> Optional[User]:
     """
