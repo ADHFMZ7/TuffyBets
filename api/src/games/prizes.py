@@ -27,16 +27,13 @@ class PrizePool:
             Prize("400 Coins", 400, PrizeType.COINS),
             Prize("450 Coins", 450, PrizeType.COINS),
             Prize("500 Coins", 500, PrizeType.COINS),
-            Prize("Golden Crown", 1000, PrizeType.VANITY),
-            Prize("Diamond Ring", 1500, PrizeType.VANITY),
-            Prize("Platinum Watch", 2000, PrizeType.VANITY),
-            Prize("Crystal Chandelier", 2500, PrizeType.VANITY),
-            Prize("Luxury Yacht", 3000, PrizeType.VANITY),
-            Prize("Mansion", 3500, PrizeType.VANITY),
-            Prize("Private Island", 4000, PrizeType.VANITY),
-            Prize("Space Travel Ticket", 4500, PrizeType.VANITY),
-            Prize("Time Machine", 5000, PrizeType.VANITY),
-            Prize("Eternal Happiness", 10000, PrizeType.VANITY)
+            Prize("1000 Coins", 1000, PrizeType.COINS),
+            Prize("1500 Coins", 1500, PrizeType.COINS),
+            Prize("2000 Coins", 2000, PrizeType.COINS),
+            Prize("4000 Coins", 4000, PrizeType.COINS),
+            Prize("4500 Coins", 4500, PrizeType.COINS),
+            Prize("5000 Coins", 5000, PrizeType.COINS),
+            Prize("10000 Coins", 10000, PrizeType.COINS)
         ]
 
     def add_prize(self, name: str, value: int, prize_type: PrizeType):
