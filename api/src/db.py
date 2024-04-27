@@ -135,7 +135,42 @@ def delete_user(session: Session, user_id: int) -> Optional[User]:
     session.delete(user)
     session.commit()
 
+def get_transaction_by_id(session: Session, trans_id: int) ->Optional[Transaction]
+    """
+    fetch the transaction by its id number from the database
 
+    Parameters:
+        session: Session - the active database session
+        trans_id: int - ID of the sought transaction
+
+    Returns:
+        Optional[Transaction] - Transaction object if found, None otherwise
+    """
+    ...
+    statement = select(Transaction).where(Transaction.transaction_id == trans_id)
+    result = session.exec(statement)
+
+    if result:
+        return result
+    return None
+
+def create_transaction(session: Session, transaction: Transaction) -> int | None:
+    """
+    Create a new transaction in the database
+
+    Parameters:
+        session: Session - the active database session
+        transaction: TransactionCreate - Data to create a new Transaction
+
+    Returns:
+        id: int - Newly created transaction id
+    """
+    transaction.id = None
+
+    session.add(transaction)  
+    session.commit()
+
+    return transaction.id
 
 # def get_game(session: Session=None, game_id: int) -> Game:
 #     """
