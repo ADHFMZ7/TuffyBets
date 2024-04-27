@@ -25,7 +25,8 @@ def create_user(session: Session, user: User) -> int | None:
     Returns:
         id: int - Newly created user's id
     """
-    ... 
+    user.id = None
+
     session.add(user)  #asks session to add user to database
     session.commit()
 
@@ -80,11 +81,9 @@ def get_user_by_username(session: Session, username: str) -> Optional[User]:
     returns:
         Optional[User] - User object if found, None otherwise
     """ 
-    ...
     statement = select(User).where(User.username == username)
-    result = session.exec(statement)
-
-    return result.one()
+    result = session.exec(statement).first()
+    return result 
 
 def update_user(session: Session, user_id: int, user_update: UserUpdate) -> Optional[User]:
     """
@@ -99,17 +98,18 @@ def update_user(session: Session, user_id: int, user_update: UserUpdate) -> Opti
         Optional[User] - Updated user object if found and updated, None otherwise
     """
     ...
-    statement = select(User).where(User.id == user_id)
-    result = session.exec(statement)
-    user = result.one()
+    user = get_user_by_id(session, user_id)
 
-    if user_update.username != None:
+    if not user:
+        return None
+
+    if user_update.username:
         user.username = user_update.username
         
-    if user_update.password != None:
+    if user_update.password:
         user.password = user_update.password
         
-    if user_update.credits != None:
+    if user_update.credits:
         user.credits = user_update.credits
     
     session.add(user)
