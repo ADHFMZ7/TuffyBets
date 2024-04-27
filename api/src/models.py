@@ -52,12 +52,15 @@ class UserUpdate(BaseModel):
     password: Optional[str] = None
     credits: Optional[int] = None
 
-class Game(SQLModel):
-    game_id: int
-    players: list[str]
+class Game(SQLModel):#table=True):
+    ...
+    # game_id: int = Field(default=None, primary_key=True)
+    # player_id: list[str]
+    # game_state: str
 
 # class Transaction(SQLModel, table=True):
-#     transaction_id: int = Field(default=None, primary_key=True)
-#     user_id: int
-#     amount: int
-#     date: date
+    # transaction_id: int = Field(default=None, primary_key=True)
+    # user_id: int
+    # game: str
+    # amount: int
+    # date: date
