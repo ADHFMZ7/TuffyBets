@@ -27,12 +27,14 @@ def spin_wheel(user: User = Depends(get_current_user), session: Session = Depend
     # TODO: check if user has done daily spin yet
     
     options = [int(random.expovariate(1/1000)) for _ in range(15)] 
-    rand_credits = options[random.choice(range(len(options)))]
+    win_index = random.choice(range(len(options)))
+   
+    print(f"User {user.username} won {options[win_index]} credits")
     
-    update_user(session, user.id, UserUpdate(credits=user.credits + rand_credits))
+    update_user(session, user.id, UserUpdate(credits=user.credits + options[win_index]))
 
     return {
-        "credits": rand_credits,
+        "win_index": win_index,
         "options": options
     }
 
