@@ -1,7 +1,8 @@
 from sqlmodel import Session, SQLModel, create_engine, select
-from models import User, Game, UserUpdate
+from models import User, Game, UserUpdate, Transaction
 from datetime import date
-from typing import Optional
+from typing import Optional, List
+from datetime import date
 
 sqlite_file_name = "database.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
@@ -135,7 +136,7 @@ def delete_user(session: Session, user_id: int) -> Optional[User]:
     session.delete(user)
     session.commit()
 
-def get_transaction_by_id(session: Session, trans_id: int) ->Optional[Transaction]
+def get_transaction_by_id(session: Session, trans_id: int) ->Optional[Transaction]:
     """
     fetch the transaction by its id number from the database
 
@@ -148,13 +149,13 @@ def get_transaction_by_id(session: Session, trans_id: int) ->Optional[Transactio
     """
     ...
     statement = select(Transaction).where(Transaction.transaction_id == trans_id)
-    result = session.exec(statement)
+    result = session.exec(statement).first()
 
     if result:
         return result
     return None
 
-def create_transaction(session: Session, transaction: Transaction) -> int | None:
+def store_transaction(session: Session, transaction: Transaction) -> int | None:
     """
     Create a new transaction in the database
 
@@ -167,10 +168,29 @@ def create_transaction(session: Session, transaction: Transaction) -> int | None
     """
     transaction.id = None
 
-    session.add(transaction)  
+    session.add(transaction)
     session.commit()
 
     return transaction.id
+
+def get_transactions_query(session: Session, date: date, player_id: int, game: str) -> List[Transaction]:
+    """
+    Fetch transactions by a specific date and player from the database
+
+    Parameters:
+        session: Session - the active database session
+        date: date - the date to filter transactions
+        player_id: int - ID of the player
+
+    Returns:
+        List[Transaction] - List of transactions matching the date and player
+    """
+    
+    statement = select(Transaction).where(
+        Transaction.date == date and Transaction.player_id == player_id and Transaction.game == game
+    )
+    result = session.exec(statement).all()
+    return result
 
 # def get_game(session: Session=None, game_id: int) -> Game:
 #     """

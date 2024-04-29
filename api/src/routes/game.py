@@ -3,8 +3,9 @@ from typing import Annotated
 from dependencies import oauth2_scheme, get_current_user, get_session
 from models import UserBase, UserUpdate, User
 from sqlmodel import Session
-from db import update_user
+from db import update_user, get_transactions_query
 from pydantic import BaseModel
+from datetime import date
 # from ..games.roulette import Roulette
 import random 
 
@@ -24,15 +25,20 @@ def spin_wheel(user: User = Depends(get_current_user), session: Session = Depend
     Randomly chooses from prize pool
 
     """
-    # TODO: check if user has done daily spin yet
+    print(get_transactions_query(session, date.today(), user.id, "Daily Spin"))
+  
     
-    options = [int(random.expovariate(1/1000)) for _ in range(15)] 
-    win_index = random.choice(range(len(options)))
+    if prev_spin := get_transactions_query(session, date.today(), user.id, "Daily Spin"):
+        options = [int(random.expovariate(1/1000)) for _ in range(15)]
+        options[0] = prev_spin[0].amount
+        win_index = 0
+    else: 
+        options = [int(random.expovariate(1/1000)) for _ in range(15)] 
+        win_index = random.choice(range(len(options)))
+        update_user(session, user.id, UserUpdate(credits=user.credits + options[win_index]))
    
     print(f"User {user.username} won {options[win_index]} credits")
     
-    update_user(session, user.id, UserUpdate(credits=user.credits + options[win_index]))
-
     return {
         "win_index": win_index,
         "options": options
