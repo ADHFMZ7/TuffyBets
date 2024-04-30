@@ -10,26 +10,7 @@ from security import SECRET_KEY, ALGORITHM
 
 router = APIRouter()
 
-@router.get("/{user_id}")
-def get_user(user_id: int, token: Annotated[str, Depends(oauth2_scheme)], session: Session = Depends(get_session)):
-    """
-    This endpoint is used to get information of 
-    currently authenticated user.
 
-    It takes in user id and returns a json
-    response containing the respective user's 
-    data.
-    """
-    user = get_user_by_id(session, user_id)
-
-    if not user:
-        raise HTTPException(status_code=400, detail="User ID does not exist")
-
-    user_data = user.model_dump()
-
-    del user_data["hashed_password"]
-
-    return UserBase(**user_data)
 
 @router.post("/transactions")
 def create_transaction(transaction: Transaction, user: User = Depends(get_current_user), session: Session = Depends(get_session)):
@@ -51,7 +32,7 @@ def create_transaction(transaction: Transaction, user: User = Depends(get_curren
     return transaction
 
 @router.get("/transactions")
-def get_transactions(token: Annotated[str, Depends(oauth2_scheme)], session: Session = Depends(get_session)):
+def get_transactions(user: User = Depends(get_current_user), session: Session = Depends(get_session)):
     """
     This endpoint is used to get all transactions
     made by a user.
@@ -59,12 +40,31 @@ def get_transactions(token: Annotated[str, Depends(oauth2_scheme)], session: Ses
     It takes in user id and returns a list of 
     transactions made by the respective user.
     """
-   
-    user_id = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])["id"]
-    
-    if not user_id:
+    if not user:
         raise HTTPException(status_code=400, detail="User ID does not exist")
 
-    transactions = session.exec(select(Transaction).where(Transaction.user_id == user_id)).all()
+    transactions = session.exec(select(Transaction).where(Transaction.user_id == user.id)).all()
 
     return transactions
+
+
+@router.get("/{user_id}")
+def get_user(user_id: int, token: Annotated[str, Depends(oauth2_scheme)], session: Session = Depends(get_session)):
+    """
+    This endpoint is used to get information of 
+    currently authenticated user.
+
+    It takes in user id and returns a json
+    response containing the respective user's 
+    data.
+    """
+    user = get_user_by_id(session, user_id)
+
+    if not user:
+        raise HTTPException(status_code=400, detail="User ID does not exist")
+
+    user_data = user.model_dump()
+
+    del user_data["hashed_password"]
+
+    return UserBase(**user_data)
