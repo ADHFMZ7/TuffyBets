@@ -86,7 +86,7 @@ def get_user_by_username(session: Session, username: str) -> Optional[User]:
     result = session.exec(statement).first()
     return result 
 
-def update_user(session: Session, user_id: int, user_update: UserUpdate) -> Optional[User]:
+def update_user(session: Session, user_id: int, user_update: UserUpdate, game: str="") -> Optional[User]:
     """
     Update an existing user in the database.
 
@@ -111,6 +111,14 @@ def update_user(session: Session, user_id: int, user_update: UserUpdate) -> Opti
         user.password = user_update.password
         
     if user_update.credits:
+        transaction = Transaction(
+            user_id=user_id,
+            game=game,
+            amount=user_update.credits,
+            date=date.today()
+        )
+        store_transaction(session, transaction) 
+        
         user.credits = user_update.credits
     
     session.add(user)
@@ -186,10 +194,14 @@ def get_transactions_query(session: Session, date: date, player_id: int, game: s
         List[Transaction] - List of transactions matching the date and player
     """
     
+    # statement = select(Transaction).where(
+    #     Transaction.date == date & Transaction.user_id == player_id & Transaction.game == game
+    # )
     statement = select(Transaction).where(
-        Transaction.date == date and Transaction.player_id == player_id and Transaction.game == game
+        (Transaction.date == date) & (Transaction.user_id == player_id) & (Transaction.game == game)
     )
     result = session.exec(statement).all()
+    print(result)
     return result
 
 # def get_game(session: Session=None, game_id: int) -> Game:

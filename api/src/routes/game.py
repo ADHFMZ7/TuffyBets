@@ -25,17 +25,18 @@ def spin_wheel(user: User = Depends(get_current_user), session: Session = Depend
     Randomly chooses from prize pool
 
     """
-    print(get_transactions_query(session, date.today(), user.id, "Daily Spin"))
-  
     
     if prev_spin := get_transactions_query(session, date.today(), user.id, "Daily Spin"):
+        print("User already spun the wheel today")
+        print("Previous spin: ", prev_spin[0].amount)
         options = [int(random.expovariate(1/1000)) for _ in range(15)]
         options[0] = prev_spin[0].amount
         win_index = 0
     else: 
         options = [int(random.expovariate(1/1000)) for _ in range(15)] 
         win_index = random.choice(range(len(options)))
-        update_user(session, user.id, UserUpdate(credits=user.credits + options[win_index]))
+        update_user(session, user.id, UserUpdate(credits=user.credits + options[win_index]), "Daily Spin")
+        
    
     print(f"User {user.username} won {options[win_index]} credits")
     
@@ -76,7 +77,7 @@ def bet_roulette(bets: Roulette_Bet, user: User = Depends(get_current_user), ses
 
     user.credits -= bet_amount
 
-    update_user(session, user.id, UserUpdate(credits=user.credits))
+    update_user(session, user.id, UserUpdate(credits=user.credits, game="Roulette"))
 
     # roulette_game = Roulette(time.time())
     # winnings, spun_number, spun_color = roulette_game.bet_color(color, bet_amount)
