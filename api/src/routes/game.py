@@ -36,7 +36,7 @@ def spin_wheel(user: User = Depends(get_current_user), session: Session = Depend
     else: 
         options = [int(random.expovariate(1/1000)) for _ in range(15)] 
         win_index = random.choice(range(len(options)))
-        update_user(session, user.id, UserUpdate(credits=user.credits + options[win_index]), "Daily Spin")
+        update_user(session, user.id, UserUpdate(credits=options[win_index]), "Daily Spin")
         
    
     print(f"User {user.username} won {options[win_index]} credits")
@@ -60,38 +60,17 @@ def login_bonus(user: User = Depends(get_current_user), session: Session = Depen
 
 ###### 
 
-class Roulette_Bet(BaseModel):
-    color: str = None
-    number: int = None 
-    bet_amount: int
 
 
-# @router.post("/roulette")
-# def bet_roulette(bets: Roulette_Bet, user: User = Depends(get_current_user), session: Session = Depends(get_session)) -> int:
-#     """
-#     Bet on a color in roulette
+class BetData(BaseModel):
+    icon: str
+    number: int
 
-#     """
-#     bet_amount = bets.bet_amount
-#     if user.credits < bet_amount:
-#         return {"error": "Insufficient funds"}
-
-#     user.credits -= bet_amount
-
-#     update_user(session, user.id, UserUpdate(credits=user.credits, game="Roulette"))
-
-#     # roulette_game = Roulette(time.time())
-#     # winnings, spun_number, spun_color = roulette_game.bet_color(color, bet_amount)
-
-#     # user.credits += winnings
-
-#     # update_user(session, user.id, UserUpdate(credits=user.credits))
-
-#     # return winnings
-    
+class BetRoulette(BaseModel):
+    bets: Dict[str, BetData]
 
 @router.post("/roulette")
-def bet_roulette(data: Dict[str, Dict[str, int]], user: User = Depends(get_current_user), session: Session = Depends(get_session)):
+def bet_roulette(data: BetRoulette, user: User = Depends(get_current_user), session: Session = Depends(get_session)):
     # Define payout rates for different bet types
     payouts = {
         "straight": 36,  # Bet on a single number
@@ -105,8 +84,10 @@ def bet_roulette(data: Dict[str, Dict[str, int]], user: User = Depends(get_curre
         "corner": 9,     # Bet on a corner (4 numbers)
         "six_line": 6    # Bet on a six line (6 numbers)
     }
+ 
+    data = data.bets
   
-    total_bet = sum([bet_data["number"] for bet_data in data.values()])
+    total_bet = sum([bet_data.number for bet_data in data.values()])
     total_winnings = 0
 
 
@@ -123,7 +104,7 @@ def bet_roulette(data: Dict[str, Dict[str, int]], user: User = Depends(get_curre
     
     for bet_type, bet_data in data.items():
 
-            number = bet_data.get("number", 0)
+            number = bet_data.number
            
             
             if bet_type == "00":
@@ -173,6 +154,7 @@ def bet_roulette(data: Dict[str, Dict[str, int]], user: User = Depends(get_curre
             else:
                 # Unknown bet type, raise an exception
                 raise HTTPException(status_code=400, detail=f"Unknown bet type: {bet_type}")
-            
+          
+    update_user(session, user.id, UserUpdate(credits=total_winnings), "Roulette")
         
     return {"winning_number": winning_number, "winnings": total_winnings}

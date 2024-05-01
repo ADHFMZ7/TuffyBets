@@ -119,7 +119,7 @@ def update_user(session: Session, user_id: int, user_update: UserUpdate, game: s
         )
         store_transaction(session, transaction) 
         
-        user.credits = user_update.credits
+        user.credits += user_update.credits
     
     session.add(user)
     session.commit()
