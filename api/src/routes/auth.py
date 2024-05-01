@@ -22,6 +22,12 @@ def register(user_reg: UserReg, session: Session = Depends(get_session)):
     It sends HTTP 200 response if an account was properly
     created and ___ on error.
     """
+    
+    if user_reg.dob > date.today() or user_reg.dob < date(1900, 1, 1):
+        raise HTTPException(status_code=400, detail="Invalid date of birth") 
+    
+    if date.today().year - user_reg.dob.year < 21:
+        raise HTTPException(status_code=400, detail="You must be at least 21 years old to register")
 
     if user_exists(session, user_reg.username):
         raise HTTPException(status_code=400, detail="Username already exists")
