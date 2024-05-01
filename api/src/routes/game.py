@@ -52,11 +52,8 @@ def login_bonus(user: User = Depends(get_current_user), session: Session = Depen
     Adds 1000 credits to user's account
 
     """
-    user.credits += 1000
-
-    update_user(session, user.id, UserUpdate(credits=user.credits))
+    update_user(session, user.id, UserUpdate(credits=1000))
     return 1000
-
 
 ###### 
 
