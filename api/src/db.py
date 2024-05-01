@@ -1,7 +1,8 @@
 from sqlmodel import Session, SQLModel, create_engine, select
-from models import User, Game, UserUpdate
+from models import User, Game, UserUpdate, Transaction
 from datetime import date
-from typing import Optional
+from typing import Optional, List
+from datetime import date
 
 sqlite_file_name = "database.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
@@ -85,7 +86,7 @@ def get_user_by_username(session: Session, username: str) -> Optional[User]:
     result = session.exec(statement).first()
     return result 
 
-def update_user(session: Session, user_id: int, user_update: UserUpdate) -> Optional[User]:
+def update_user(session: Session, user_id: int, user_update: UserUpdate, game: str="") -> Optional[User]:
     """
     Update an existing user in the database.
 
@@ -110,7 +111,15 @@ def update_user(session: Session, user_id: int, user_update: UserUpdate) -> Opti
         user.password = user_update.password
         
     if user_update.credits:
-        user.credits = user_update.credits
+        transaction = Transaction(
+            user_id=user_id,
+            game=game,
+            amount=user_update.credits,
+            date=date.today()
+        )
+        store_transaction(session, transaction) 
+        
+        user.credits += user_update.credits
     
     session.add(user)
     session.commit()
@@ -135,7 +144,7 @@ def delete_user(session: Session, user_id: int) -> Optional[User]:
     session.delete(user)
     session.commit()
 
-def get_transaction_by_id(session: Session, trans_id: int) ->Optional[Transaction]
+def get_transaction_by_id(session: Session, trans_id: int) ->Optional[Transaction]:
     """
     fetch the transaction by its id number from the database
 
@@ -148,13 +157,13 @@ def get_transaction_by_id(session: Session, trans_id: int) ->Optional[Transactio
     """
     ...
     statement = select(Transaction).where(Transaction.transaction_id == trans_id)
-    result = session.exec(statement)
+    result = session.exec(statement).first()
 
     if result:
         return result
     return None
 
-def create_transaction(session: Session, transaction: Transaction) -> int | None:
+def store_transaction(session: Session, transaction: Transaction) -> int | None:
     """
     Create a new transaction in the database
 
@@ -167,10 +176,33 @@ def create_transaction(session: Session, transaction: Transaction) -> int | None
     """
     transaction.id = None
 
-    session.add(transaction)  
+    session.add(transaction)
     session.commit()
 
     return transaction.id
+
+def get_transactions_query(session: Session, date: date, player_id: int, game: str) -> List[Transaction]:
+    """
+    Fetch transactions by a specific date and player from the database
+
+    Parameters:
+        session: Session - the active database session
+        date: date - the date to filter transactions
+        player_id: int - ID of the player
+
+    Returns:
+        List[Transaction] - List of transactions matching the date and player
+    """
+    
+    # statement = select(Transaction).where(
+    #     Transaction.date == date & Transaction.user_id == player_id & Transaction.game == game
+    # )
+    statement = select(Transaction).where(
+        (Transaction.date == date) & (Transaction.user_id == player_id) & (Transaction.game == game)
+    )
+    result = session.exec(statement).all()
+    print(result)
+    return result
 
 # def get_game(session: Session=None, game_id: int) -> Game:
 #     """

@@ -1,6 +1,6 @@
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer    
-from models import User
+from models import User, UserBase
 from typing import Annotated
 from db import engine, get_user_by_id
 from sqlmodel import Session
@@ -9,7 +9,7 @@ from security import SECRET_KEY, ALGORITHM
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> User:
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> UserBase:
     """
     Fetches data from the currently 
     authenticated user.
@@ -20,7 +20,6 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> Use
     Returns: 
         User: The user that created the provided token 
     """
-    print("TOKEN: ", token) 
     
     credentials_exception = HTTPException(
         status_code=401,
