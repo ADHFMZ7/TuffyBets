@@ -48,7 +48,6 @@ def register(user_reg: UserReg, session: Session = Depends(get_session)):
 
 
 @router.post("/login")
-# def signin(username: Annotated[str, Form()], password: Annotated[str, Form()]):
 def signin(form_data: OAuth2PasswordRequestForm = Depends(), session: Session=Depends(get_session)):
     """
     This endpoint is used to authenticate a user to 

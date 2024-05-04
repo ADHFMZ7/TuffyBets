@@ -10,7 +10,6 @@ from routes import user, auth, game
 from db import engine, create_db_and_tables
 
 app = FastAPI()
-# TODO: LOOK MORE INTO THESE LATER
 
 create_db_and_tables()
 
@@ -27,4 +26,3 @@ create_db_and_tables()
 app.include_router(auth.router, prefix="/auth")
 app.include_router(user.router, prefix="/user")
 app.include_router(game.router, prefix="/game")
-
